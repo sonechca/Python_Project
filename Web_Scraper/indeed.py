@@ -5,7 +5,7 @@ LIMIT = 50
 URL = f"https://www.indeed.ca/jobs?q=python&limit={LIMIT}"
 
 
-def extract_indeed_pages():
+def get_last_page():
   result = requests.get(URL)
   soup = BeautifulSoup(result.text, "html.parser") #extract html
 
@@ -24,11 +24,14 @@ def extract_job(html):
   title = html.find("div",{"class": "title"}).find("a")["title"]
   company = html.find("span", {"class": "company"}) #find the span with class "company"
   company_anchor = company.find("a") #make another soup with anchor
-  if company_anchor is not None:
-    company = str(company_anchor.string)
+  if company:
+    if company_anchor is not None:
+      company = str(company_anchor.string)
+    else:
+      company = str(company.string)
+    company = company.strip()
   else:
-     company = str(company.string)
-  company = company.strip()
+    company = None
   location = html.find("div", {"class": "recJobLoc"})["data-rc-loc"] # There is hidden value so I need to access different method
   job_id = html["data-jk"]
   return {
@@ -38,7 +41,7 @@ def extract_job(html):
     "link": f"https://www.indeed.ca/viewjob?jk={job_id}"
     }
 
-def extract_indeed_jobs(last_pages):
+def extract_jobs(last_pages):
   jobs=[]
   for page in range(last_pages):
     print(f"Scrappin page {page}") # Count the scrapping pages
@@ -48,4 +51,10 @@ def extract_indeed_jobs(last_pages):
     for result in results:
       job = extract_job(result)
       jobs.append(job)
+  return jobs
+
+#Collect information with functions and return for main.py
+def get_jobs():
+  last_page = get_last_page()
+  jobs = extract_jobs(last_page)
   return jobs

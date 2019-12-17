@@ -1,7 +1,5 @@
-from indeed import extract_indeed_pages, extract_indeed_jobs #Call function
+from indeed import get_jobs as get_indeed_jobs #import for indeed.ca
+from stack_overflow import get_jobs as get_stackoverflow_jobs #import for stackoverflow.com
 
-last_indeed_pages = extract_indeed_pages() #Get last page
-
-indeed_jobs = extract_indeed_jobs(last_indeed_pages) #Find the job
-
-print(indeed_jobs) #Check the all of job informations
+indeed_jobs = get_indeed_jobs()
+stackoverflow_jobs = get_stackoverflow_jobs()
